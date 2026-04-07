@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import type { SignResult } from '../../lib/signAlgorithm';
 
 interface UserProfile {
   name: string;
@@ -16,20 +17,32 @@ interface AppState {
   currentOnboardingStep: number;
   userProfile: UserProfile;
   
+  // Quiz state
+  answers: Record<number, string>; // questionId → optionId
+  
+  // Calculated signs
+  signs: SignResult | null;
+  
   // Actions
   completeOnboarding: () => void;
   setCurrentOnboardingStep: (step: number) => void;
   updateUserProfile: (profile: Partial<UserProfile>) => void;
   resetApp: () => void;
+  
+  // Quiz actions
+  addAnswer: (questionId: number, optionId: string) => void;
+  calculateSigns: () => void;
 }
 
-export const useAppStore = create<AppState>((set) => ({
+export const useAppStore = create<AppState>((set, get) => ({
   // Initial state
   hasCompletedOnboarding: false,
   currentOnboardingStep: 0,
   userProfile: {
     name: '',
   },
+  answers: {},
+  signs: null,
   
   // Actions
   completeOnboarding: () => set({ hasCompletedOnboarding: true }),
@@ -48,5 +61,20 @@ export const useAppStore = create<AppState>((set) => ({
       userProfile: {
         name: '',
       },
+      answers: {},
+      signs: null,
     }),
+  
+  // Quiz actions
+  addAnswer: (questionId, optionId) =>
+    set((state) => ({
+      answers: { ...state.answers, [questionId]: optionId },
+    })),
+  
+  calculateSigns: () => {
+    const { calculateSigns: calcSigns } = require('../../lib/signAlgorithm');
+    const profile = { name: get().userProfile.name, answers: get().answers };
+    const signs = calcSigns(profile);
+    set({ signs });
+  },
 }));

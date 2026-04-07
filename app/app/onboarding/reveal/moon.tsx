@@ -11,31 +11,23 @@ import { Moon } from '../../../components/icons/Moon';
  * 
  * The emotional peak. The screenshot moment.
  * Copy from design/ux-writing.md
- * 
- * NOTE: Uses mock data - actual sign calculation not implemented yet.
  */
-
-// Mock data for demo
-const MOCK_MOON_SIGN = {
-  name: 'Scorpio',
-  subtitle: 'The part of you most people never see.',
-  interpretation: `Your emotional life runs deeper than almost anyone knows. You don't just feel — you experience emotions at an intensity that can be overwhelming, which is why you've learned to keep most of it hidden.
-
-You're intensely loyal to the people you trust, but that trust isn't given lightly. Once someone has earned it, though, you'll stand by them through anything.`,
-};
 
 export default function MoonRevealScreen() {
   const router = useRouter();
+  const signs = useAppStore((state) => state.signs);
   const updateUserProfile = useAppStore((state) => state.updateUserProfile);
-  const userProfile = useAppStore((state) => state.userProfile);
 
   React.useEffect(() => {
-    updateUserProfile({ moonSign: MOCK_MOON_SIGN.name });
-  }, []);
+    if (signs?.moon) {
+      updateUserProfile({ moonSign: signs.moon.sign });
+    }
+  }, [signs]);
 
   const handleShare = async () => {
+    if (!signs?.moon) return;
     // Simple share implementation - in production would use Share API
-    const shareText = `My Moon sign is ${MOCK_MOON_SIGN.name} — ${MOCK_MOON_SIGN.subtitle} Discover yours with Stellr.`;
+    const shareText = `My Moon sign is ${signs.moon.sign} — The part of me most people never see. Discover yours with Stellr.`;
     try {
       // Would use React Native Share API in production
       console.log('Share:', shareText);
@@ -43,6 +35,12 @@ export default function MoonRevealScreen() {
       console.error('Share failed:', error);
     }
   };
+
+  // Fallback if signs not calculated yet
+  if (!signs) {
+    router.push('/onboarding/name-input');
+    return null;
+  }
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -52,11 +50,11 @@ export default function MoonRevealScreen() {
       
       <Text style={styles.label}>Your emotional world</Text>
       
-      <Text style={styles.signName}>{MOCK_MOON_SIGN.name}</Text>
+      <Text style={styles.signName}>{signs.moon.sign}</Text>
       
-      <Text style={styles.subtitle}>{MOCK_MOON_SIGN.subtitle}</Text>
+      <Text style={styles.subtitle}>The part of you most people never see.</Text>
       
-      <Text style={styles.interpretation}>{MOCK_MOON_SIGN.interpretation}</Text>
+      <Text style={styles.interpretation}>{signs.moon.interpretation}</Text>
       
       <View style={styles.shareSection}>
         <Text style={styles.shareNudge}>

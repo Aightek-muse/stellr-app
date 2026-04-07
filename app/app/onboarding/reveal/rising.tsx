@@ -11,26 +11,24 @@ import { Compass } from '../../../components/icons/Compass';
  * 
  * The clarifier. Explains how others experience the user.
  * Copy from design/ux-writing.md
- * 
- * NOTE: Uses mock data - actual sign calculation not implemented yet.
  */
-
-// Mock data for demo
-const MOCK_RISING_SIGN = {
-  name: 'Gemini',
-  subtitle: 'The first impression you leave — even when you\'re not trying.',
-  interpretation: `To the people around you, you come across as quick, curious, and endlessly adaptable. You have a way of making anyone feel like you're on the same wavelength — because you can genuinely meet them there.
-
-People often describe you as "easy to talk to" or "interesting." What they're sensing is your natural ability to find common ground and ask the right questions.`,
-};
 
 export default function RisingRevealScreen() {
   const router = useRouter();
+  const signs = useAppStore((state) => state.signs);
   const updateUserProfile = useAppStore((state) => state.updateUserProfile);
 
   React.useEffect(() => {
-    updateUserProfile({ risingSign: MOCK_RISING_SIGN.name });
-  }, []);
+    if (signs?.rising) {
+      updateUserProfile({ risingSign: signs.rising.sign });
+    }
+  }, [signs]);
+
+  // Fallback if signs not calculated yet
+  if (!signs) {
+    router.push('/onboarding/name-input');
+    return null;
+  }
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -40,11 +38,11 @@ export default function RisingRevealScreen() {
       
       <Text style={styles.label}>How others experience you</Text>
       
-      <Text style={styles.signName}>{MOCK_RISING_SIGN.name}</Text>
+      <Text style={styles.signName}>{signs.rising.sign}</Text>
       
-      <Text style={styles.subtitle}>{MOCK_RISING_SIGN.subtitle}</Text>
+      <Text style={styles.subtitle}>The first impression you leave — even when you're not trying.</Text>
       
-      <Text style={styles.interpretation}>{MOCK_RISING_SIGN.interpretation}</Text>
+      <Text style={styles.interpretation}>{signs.rising.interpretation}</Text>
       
       <View style={styles.spacer} />
       

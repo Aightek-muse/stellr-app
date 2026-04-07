@@ -11,27 +11,25 @@ import { Sun } from '../../../components/icons/Sun';
  * 
  * First reveal. Expected but still meaningful.
  * Copy from design/ux-writing.md
- * 
- * NOTE: Uses mock data - actual sign calculation not implemented yet.
  */
-
-// Mock data for demo
-const MOCK_SUN_SIGN = {
-  name: 'Libra',
-  dateRange: 'September 23 – October 22',
-  interpretation: `At your core, you are someone who searches for balance. You have a natural ability to see multiple perspectives, which makes you an excellent mediator and friend.
-
-You're drawn to beauty, harmony, and fairness. Conflict feels uncomfortable to you — not because you're avoidant, but because you genuinely believe there's usually a middle ground that works for everyone.`,
-};
 
 export default function SunRevealScreen() {
   const router = useRouter();
+  const signs = useAppStore((state) => state.signs);
   const updateUserProfile = useAppStore((state) => state.updateUserProfile);
 
-  // Store mock sign (in real app, this would be calculated)
+  // Store calculated sign
   React.useEffect(() => {
-    updateUserProfile({ sunSign: MOCK_SUN_SIGN.name });
-  }, []);
+    if (signs?.sun) {
+      updateUserProfile({ sunSign: signs.sun.sign });
+    }
+  }, [signs]);
+
+  // Fallback if signs not calculated yet
+  if (!signs) {
+    router.push('/onboarding/name-input');
+    return null;
+  }
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -41,11 +39,11 @@ export default function SunRevealScreen() {
       
       <Text style={styles.label}>Your core identity</Text>
       
-      <Text style={styles.signName}>{MOCK_SUN_SIGN.name}</Text>
+      <Text style={styles.signName}>{signs.sun.sign}</Text>
       
-      <Text style={styles.dateRange}>{MOCK_SUN_SIGN.dateRange}</Text>
+      <Text style={styles.dateRange}>{signs.sun.dateRange}</Text>
       
-      <Text style={styles.interpretation}>{MOCK_SUN_SIGN.interpretation}</Text>
+      <Text style={styles.interpretation}>{signs.sun.interpretation}</Text>
       
       <View style={styles.spacer} />
       
