@@ -1,24 +1,30 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
 import { Compass as CompassIcon } from 'lucide-react-native';
 import { tokens } from '../../lib/tokens';
 
 interface CompassProps {
   size?: number;
   color?: string;
+  strokeWidth?: number;
 }
 
-export function Compass({ size = 24, color = tokens.colors.gold }: CompassProps) {
+/**
+ * Compass icon component.
+ * 
+ * - Default size: 24px (lg)
+ * - Default color: gold
+ * - Stroke width: 1.5px
+ */
+export function Compass({ 
+  size = tokens.icons.sizes.lg, 
+  color = tokens.colors.gold,
+  strokeWidth = 1.5,
+}: CompassProps) {
   return (
-    <View style={styles.container}>
-      <CompassIcon size={size} color={color} strokeWidth={tokens.icons.strokeWidth as any} />
-    </View>
+    <CompassIcon 
+      size={size} 
+      color={color} 
+      strokeWidth={strokeWidth} 
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

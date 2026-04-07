@@ -1,24 +1,30 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
 import { Moon as MoonIcon } from 'lucide-react-native';
 import { tokens } from '../../lib/tokens';
 
 interface MoonProps {
   size?: number;
   color?: string;
+  strokeWidth?: number;
 }
 
-export function Moon({ size = 24, color = tokens.colors.lavender }: MoonProps) {
+/**
+ * Moon icon component.
+ * 
+ * - Default size: 24px (lg)
+ * - Default color: lavender
+ * - Stroke width: 1.5px
+ */
+export function Moon({ 
+  size = tokens.icons.sizes.lg, 
+  color = tokens.colors.lavender,
+  strokeWidth = 1.5,
+}: MoonProps) {
   return (
-    <View style={styles.container}>
-      <MoonIcon size={size} color={color} strokeWidth={tokens.icons.strokeWidth as any} />
-    </View>
+    <MoonIcon 
+      size={size} 
+      color={color} 
+      strokeWidth={strokeWidth} 
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

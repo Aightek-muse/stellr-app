@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { TextInput, View, Text, StyleSheet } from 'react-native';
 import { tokens } from '../../lib/tokens';
 
-interface InputProps {
+export interface InputProps {
   label?: string;
   placeholder?: string;
   value: string;
@@ -12,6 +12,13 @@ interface InputProps {
   style?: any;
 }
 
+/**
+ * Text Input component with focus state.
+ * 
+ * - Background: surface1
+ * - Border: 1.5px solid border
+ * - Focus: gold border + 3px gold alpha ring
+ */
 export function Input({
   label,
   placeholder,
@@ -21,17 +28,24 @@ export function Input({
   autoCapitalize = 'sentences',
   style,
 }: InputProps) {
+  const [isFocused, setIsFocused] = useState(false);
+
   return (
     <View style={[styles.container, style]}>
       {label && <Text style={styles.label}>{label}</Text>}
       <TextInput
-        style={styles.input}
+        style={[
+          styles.input,
+          isFocused && styles.inputFocused,
+        ]}
         placeholder={placeholder}
         placeholderTextColor={tokens.colors.textMuted}
         value={value}
         onChangeText={onChangeText}
         keyboardType={keyboardType}
         autoCapitalize={autoCapitalize}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
       />
     </View>
   );
@@ -57,5 +71,13 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat',
     fontSize: tokens.typography.sizes.bodyLg,
     color: tokens.colors.textPrimary,
+  },
+  inputFocused: {
+    borderColor: tokens.colors.gold,
+    shadowColor: tokens.colors.gold,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.15,
+    shadowRadius: 3,
+    elevation: 0,
   },
 });

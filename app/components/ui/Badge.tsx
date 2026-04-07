@@ -1,45 +1,72 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { tokens } from '../../lib/tokens';
+import { Lock } from 'lucide-react-native';
 
 interface BadgeProps {
-  children: React.ReactNode;
-  variant?: 'gold' | 'lavender' | 'locked';
+  variant?: 'stellr-plus' | 'gold' | 'lavender' | 'locked';
   size?: 'sm' | 'md';
+  label?: string;
 }
 
-export function Badge({ children, variant = 'gold', size = 'md' }: BadgeProps) {
+/**
+ * Badge component for Stellr+ and other indicators.
+ * 
+ * - Stellr+: gold alpha bg, lock icon + "Stellr+" label
+ * - Gold/Lavender: Color-coded variants
+ */
+export function Badge({ variant = 'stellr-plus', size = 'sm', label }: BadgeProps) {
+  const displayLabel = label || (variant === 'stellr-plus' || variant === 'locked' ? 'Stellr+' : '');
+  
   return (
     <View
       style={[
         styles.badge,
+        variant === 'stellr-plus' && styles.stellrPlus,
         variant === 'gold' && styles.gold,
         variant === 'lavender' && styles.lavender,
         variant === 'locked' && styles.locked,
         size === 'sm' && styles.sm,
       ]}
     >
-      <Text
-        style={[
-          styles.text,
-          variant === 'gold' && styles.goldText,
-          variant === 'lavender' && styles.lavenderText,
-          variant === 'locked' && styles.lockedText,
-          size === 'sm' && styles.smText,
-        ]}
-      >
-        {children}
-      </Text>
+      {(variant === 'stellr-plus' || variant === 'locked') && (
+        <Lock 
+          size={10} 
+          color={tokens.colors.gold} 
+          strokeWidth={tokens.icons.strokeWidth as any} 
+        />
+      )}
+      {displayLabel ? (
+        <Text
+          style={[
+            styles.text,
+            variant === 'stellr-plus' && styles.stellrPlusText,
+            variant === 'gold' && styles.goldText,
+            variant === 'lavender' && styles.lavenderText,
+            variant === 'locked' && styles.lockedText,
+            size === 'sm' && styles.smText,
+          ]}
+        >
+          {displayLabel}
+        </Text>
+      ) : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   badge: {
-    paddingHorizontal: tokens.spacing.md,
-    paddingVertical: tokens.spacing.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: tokens.spacing.xs,
+    paddingHorizontal: tokens.spacing.sm,
+    paddingVertical: 4,
     borderRadius: tokens.radius.sm,
     borderWidth: 1,
+  },
+  stellrPlus: {
+    backgroundColor: tokens.colors.alpha.gold15,
+    borderColor: tokens.colors.alpha.badgeBorder,
   },
   gold: {
     backgroundColor: tokens.colors.alpha.gold15,
@@ -50,17 +77,21 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(139,124,248,0.3)',
   },
   locked: {
-    backgroundColor: tokens.colors.surface2,
-    borderColor: tokens.colors.border,
+    backgroundColor: tokens.colors.alpha.gold15,
+    borderColor: tokens.colors.alpha.badgeBorder,
   },
   sm: {
     paddingHorizontal: tokens.spacing.sm,
     paddingVertical: 4,
   },
   text: {
-    fontFamily: 'Montserrat-Medium',
-    fontSize: tokens.typography.sizes.xs,
-    fontWeight: String(tokens.typography.fontWeights.medium) as any,
+    fontFamily: 'Montserrat-SemiBold',
+    fontSize: 10,
+    fontWeight: String(tokens.typography.fontWeights.semibold) as any,
+    marginLeft: 2,
+  },
+  stellrPlusText: {
+    color: tokens.colors.gold,
   },
   goldText: {
     color: tokens.colors.gold,
@@ -69,9 +100,9 @@ const styles = StyleSheet.create({
     color: tokens.colors.lavender,
   },
   lockedText: {
-    color: tokens.colors.textMuted,
+    color: tokens.colors.gold,
   },
   smText: {
-    fontSize: tokens.typography.sizes.xs,
+    fontSize: 10,
   },
 });

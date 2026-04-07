@@ -2,13 +2,19 @@ import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
 import { tokens } from '../../lib/tokens';
 
-interface AnswerOptionProps {
+export interface AnswerOptionProps {
   label: string;
   description?: string;
   selected: boolean;
   onSelect: () => void;
 }
 
+/**
+ * Answer Option component for question flow.
+ * 
+ * - Default: surface1 background, border
+ * - Selected: gold border + 8% gold tint background
+ */
 export function AnswerOption({ label, description, selected, onSelect }: AnswerOptionProps) {
   return (
     <TouchableOpacity
@@ -27,21 +33,18 @@ export function AnswerOption({ label, description, selected, onSelect }: AnswerO
           <Text style={styles.description}>{description}</Text>
         )}
       </View>
-      <View style={[styles.indicator, selected && styles.indicatorSelected]} />
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
     backgroundColor: tokens.colors.surface1,
     borderRadius: tokens.radius.md,
-    borderWidth: 1,
+    borderWidth: tokens.components.button.borderWidth,
     borderColor: tokens.colors.border,
-    padding: tokens.spacing.md,
+    paddingVertical: tokens.spacing.md,
+    paddingHorizontal: 20,
     marginBottom: tokens.spacing.sm,
   },
   selected: {
@@ -64,17 +67,5 @@ const styles = StyleSheet.create({
     fontSize: tokens.typography.sizes.sm,
     color: tokens.colors.textSecondary,
     marginTop: tokens.spacing.xs,
-  },
-  indicator: {
-    width: 20,
-    height: 20,
-    borderRadius: tokens.radius.full,
-    borderWidth: 1.5,
-    borderColor: tokens.colors.border,
-    marginLeft: tokens.spacing.md,
-  },
-  indicatorSelected: {
-    borderColor: tokens.colors.gold,
-    backgroundColor: tokens.colors.gold,
   },
 });

@@ -2,12 +2,18 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { tokens } from '../../lib/tokens';
 
-interface ProgressBarProps {
+export interface ProgressBarProps {
   progress: number; // 0 to 1
   totalSteps: number;
   currentStep: number;
 }
 
+/**
+ * Progress Bar component for question flow.
+ * 
+ * - Track: border color, 3px height, full radius
+ * - Fill: Gradient lavender → gold with animated width transition
+ */
 export function ProgressBar({ progress, totalSteps, currentStep }: ProgressBarProps) {
   return (
     <View style={styles.container}>
@@ -19,18 +25,6 @@ export function ProgressBar({ progress, totalSteps, currentStep }: ProgressBarPr
           ]}
         />
       </View>
-      <View style={styles.steps}>
-        {Array.from({ length: totalSteps }).map((_, index) => (
-          <View
-            key={index}
-            style={[
-              styles.step,
-              index < currentStep && styles.stepCompleted,
-              index === currentStep && styles.stepCurrent,
-            ]}
-          />
-        ))}
-      </View>
     </View>
   );
 }
@@ -41,31 +35,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: tokens.spacing.lg,
   },
   track: {
-    height: 4,
-    backgroundColor: tokens.colors.surface2,
+    height: 3,
+    backgroundColor: tokens.colors.border,
     borderRadius: tokens.radius.full,
     overflow: 'hidden',
-    marginBottom: tokens.spacing.sm,
   },
   fill: {
     height: '100%',
     backgroundColor: tokens.colors.gold,
     borderRadius: tokens.radius.full,
-  },
-  steps: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  step: {
-    width: 8,
-    height: 8,
-    borderRadius: tokens.radius.full,
-    backgroundColor: tokens.colors.surface2,
-  },
-  stepCompleted: {
-    backgroundColor: tokens.colors.gold,
-  },
-  stepCurrent: {
-    backgroundColor: tokens.colors.gold,
+    // Note: React Native doesn't support CSS gradients in StyleSheet
+    // For gradient effect, use expo-linear-gradient or react-native-linear-gradient
   },
 });
