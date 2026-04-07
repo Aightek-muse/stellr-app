@@ -1,0 +1,114 @@
+/* Stellr Design Tokens */
+/* Generated: 2026-04-07 */
+/* Dark Celestial Theme — OLED-optimized, warm gold accents */
+
+:root {
+  /* Color Tokens */
+  --color-bg: #08090F;
+  --color-surface-1: #0F1020;
+  --color-surface-2: #161830;
+  --color-border: #1E2040;
+  --color-gold: #f2c35b;
+  --color-gold-dim: #a88f3a;
+  --color-lavender: #8B7CF8;
+  --color-lavender-dim: #4A4580;
+  --color-text-primary: #F0EDF8;
+  --color-text-secondary: #9B98BC;
+  --color-text-muted: #5A5878;
+  --color-white: #FFFFFF;
+  --color-error: #EF4444;
+  --color-success: #22C55E;
+
+  /* Alpha Color Tokens */
+  --color-gold-alpha-15: #f2c35b26;
+  --color-ghost-border: #f2c35b66;
+  --color-badge-border: #f2c35b4D;
+  --color-answer-selected-bg: #f2c35b14;
+
+  /* Typography — Font Families */
+  --font-display: 'Cormorant', serif;
+  --font-body: 'Montserrat', sans-serif;
+
+  /* Typography — Font Sizes */
+  --font-size-xs: 12px;
+  --font-size-sm: 13px;
+  --font-size-body: 15px;
+  --font-size-body-lg: 16px;
+  --font-size-subheading: 18px;
+  --font-size-heading: 24px;
+  --font-size-heading-lg: 32px;
+  --font-size-display: 40px;
+  --font-size-display-lg: 56px;
+
+  /* Typography — Font Weights */
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Typography — Line Heights */
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.4;
+  --line-height-relaxed: 1.6;
+  --line-height-loose: 1.7;
+
+  /* Spacing System (8dp base) */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+
+  /* Layout Constants */
+  --screen-padding-h: 24px;
+  --safe-top: 52px;
+  --safe-bottom: 34px;
+  --screen-width: 390px;
+  --screen-height: 844px;
+
+  /* Border Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 999px;
+
+  /* Shadow & Glow */
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+  --shadow-modal: 0 8px 40px rgba(0, 0, 0, 0.6);
+  --glow-gold: 0 0 20px rgba(242, 195, 91, 0.35);
+  --glow-lavender: 0 0 20px rgba(139, 124, 248, 0.25);
+  --glow-text: 0 0 12px rgba(242, 195, 91, 0.4);
+
+  /* Component Tokens */
+  --btn-height-md: 56px;
+  --btn-height-sm: 52px;
+  --btn-border-width: 1.5px;
+  --input-height: 56px;
+  --card-border-width: 1px;
+  --opacity-locked: 0.7;
+  --opacity-disabled: 0.4;
+
+  /* Icon Sizes */
+  --icon-sm: 16px;
+  --icon-md: 20px;
+  --icon-lg: 24px;
+  --icon-xl: 32px;
+
+  /* Animation Durations */
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+  --duration-cinematic: 600ms;
+
+  /* Animation Easing */
+  --easing-out: cubic-bezier(0.0, 0.0, 0.2, 1);
+  --easing-in: cubic-bezier(0.4, 0.0, 1, 1);
+  --easing-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Google Fonts Import */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap');
