@@ -5,29 +5,38 @@ import { Button } from '../../components/ui/Button';
 import { useRouter } from 'expo-router';
 import { Star } from '../../components/icons/Star';
 
+/**
+ * Welcome Screen - Onboarding Step 1
+ * 
+ * Hook the user. Address the birth time barrier immediately.
+ * Copy from design/ux-writing.md
+ */
 export default function WelcomeScreen() {
   const router = useRouter();
 
   return (
     <View style={styles.container}>
-      <View style={styles.iconContainer}>
-        <Star size={64} color={tokens.colors.gold} />
+      <View style={styles.heroContainer}>
+        <Star size={72} color={tokens.colors.gold} />
       </View>
       
-      <Text style={styles.title}>Welcome to Stellr</Text>
-      <Text style={styles.subtitle}>
-        Discover your cosmic blueprint through personalized astrology
+      <Text style={styles.headline}>Your Big 3, no birth time needed.</Text>
+      
+      <Text style={styles.subhead}>
+        Answer 7 questions about who you are. We'll find your Sun, Moon, and Rising sign.
       </Text>
       
-      <View style={styles.buttons}>
-        <Button
-          variant="primary"
-          onPress={() => router.push('/onboarding/name-input')}
-          style={styles.button}
-        >
-          Get Started
-        </Button>
-      </View>
+      <Button
+        variant="primary"
+        onPress={() => router.push('/onboarding/name-input')}
+        style={styles.cta}
+      >
+        Find My Signs
+      </Button>
+      
+      <Text style={styles.trustLine}>
+        Private. Takes 2 minutes. No birth time required.
+      </Text>
     </View>
   );
 }
@@ -36,22 +45,23 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: tokens.colors.bg,
-    padding: tokens.spacing.lg,
+    paddingHorizontal: tokens.spacing.lg,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  iconContainer: {
-    marginBottom: tokens.spacing.xl,
+  heroContainer: {
+    marginBottom: tokens.spacing['2xl'],
   },
-  title: {
+  headline: {
     fontFamily: 'Cormorant',
-    fontSize: tokens.typography.sizes.displayLg,
-    fontWeight: String(tokens.typography.fontWeights.light) as any,
+    fontSize: tokens.typography.sizes.display,
+    fontWeight: String(tokens.typography.fontWeights.regular) as any,
     color: tokens.colors.textPrimary,
-    marginBottom: tokens.spacing.md,
     textAlign: 'center',
+    marginBottom: tokens.spacing.lg,
+    lineHeight: tokens.typography.lineHeights.tight * tokens.typography.sizes.display,
   },
-  subtitle: {
+  subhead: {
     fontFamily: 'Montserrat',
     fontSize: tokens.typography.sizes.body,
     color: tokens.colors.textSecondary,
@@ -59,10 +69,14 @@ const styles = StyleSheet.create({
     lineHeight: tokens.typography.lineHeights.relaxed * tokens.typography.sizes.body,
     marginBottom: tokens.spacing['3xl'],
   },
-  buttons: {
+  cta: {
     width: '100%',
+    marginBottom: tokens.spacing.md,
   },
-  button: {
-    width: '100%',
+  trustLine: {
+    fontFamily: 'Montserrat',
+    fontSize: tokens.typography.sizes.xs,
+    color: tokens.colors.textMuted,
+    textAlign: 'center',
   },
 });

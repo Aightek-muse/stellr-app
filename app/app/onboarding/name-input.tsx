@@ -6,6 +6,12 @@ import { Input } from '../../components/ui/Input';
 import { useRouter } from 'expo-router';
 import { useAppStore } from '../../store/useAppStore';
 
+/**
+ * Name Input Screen - Onboarding Step 2
+ * 
+ * Capture name for personalization. Build rapport before questions.
+ * Copy from design/ux-writing.md
+ */
 export default function NameInputScreen() {
   const router = useRouter();
   const updateUserProfile = useAppStore((state) => state.updateUserProfile);
@@ -24,13 +30,10 @@ export default function NameInputScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <View style={styles.content}>
-        <Text style={styles.title}>What's your name?</Text>
-        <Text style={styles.subtitle}>
-          We'll use this to personalize your readings
-        </Text>
+        <Text style={styles.prompt}>First, what should we call you?</Text>
         
         <Input
-          placeholder="Enter your name"
+          placeholder="Your name"
           value={name}
           onChangeText={setName}
           autoCapitalize="words"
@@ -41,10 +44,14 @@ export default function NameInputScreen() {
           variant="primary"
           onPress={handleContinue}
           disabled={!name.trim()}
-          style={styles.button}
+          style={styles.cta}
         >
           Continue
         </Button>
+        
+        <Text style={styles.trustLine}>
+          No email needed yet. Just your name.
+        </Text>
       </View>
     </KeyboardAvoidingView>
   );
@@ -61,23 +68,25 @@ const styles = StyleSheet.create({
     paddingTop: tokens.layout.safeTop,
     justifyContent: 'center',
   },
-  title: {
+  prompt: {
     fontFamily: 'Cormorant',
     fontSize: tokens.typography.sizes.display,
-    fontWeight: String(tokens.typography.fontWeights.light) as any,
+    fontWeight: String(tokens.typography.fontWeights.regular) as any,
     color: tokens.colors.textPrimary,
-    marginBottom: tokens.spacing.md,
-  },
-  subtitle: {
-    fontFamily: 'Montserrat',
-    fontSize: tokens.typography.sizes.body,
-    color: tokens.colors.textSecondary,
     marginBottom: tokens.spacing.xl,
+    textAlign: 'center',
   },
   input: {
     marginBottom: tokens.spacing.lg,
   },
-  button: {
+  cta: {
     width: '100%',
+    marginBottom: tokens.spacing.md,
+  },
+  trustLine: {
+    fontFamily: 'Montserrat',
+    fontSize: tokens.typography.sizes.xs,
+    color: tokens.colors.textMuted,
+    textAlign: 'center',
   },
 });

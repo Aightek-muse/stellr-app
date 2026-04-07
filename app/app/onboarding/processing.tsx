@@ -1,25 +1,57 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { tokens } from '../../lib/tokens';
 import { useRouter } from 'expo-router';
+import { useAppStore } from '../../store/useAppStore';
 import { Star } from '../../components/icons/Star';
+
+/**
+ * Processing Screen - Onboarding Step 10
+ * 
+ * Build anticipation. Make the wait feel active, not passive.
+ * Rotating text every 2.5 seconds.
+ * Total duration: 10-15 seconds.
+ * Copy from design/ux-writing.md
+ */
+
+const PROCESSING_MESSAGES = [
+  'Reading your energy patterns...',
+  'Weighing your emotional nature...',
+  'Mapping your social instincts...',
+  'Checking all 1,728 combinations...',
+];
 
 export default function ProcessingScreen() {
   const router = useRouter();
+  const userProfile = useAppStore((state) => state.userProfile);
+  const [messageIndex, setMessageIndex] = useState(0);
 
   useEffect(() => {
-    // Simulate processing time, then navigate to reveal
-    const timer = setTimeout(() => {
-      router.push('/onboarding/reveal/sun');
-    }, 2000);
+    // Rotate through messages every 2.5 seconds
+    const messageInterval = setInterval(() => {
+      setMessageIndex((prev) => (prev + 1) % PROCESSING_MESSAGES.length);
+    }, 2500);
 
-    return () => clearTimeout(timer);
-  }, [router]);
+    // Total processing time: 12 seconds, then navigate to sun reveal
+    const timer = setTimeout(() => {
+      clearInterval(messageInterval);
+      router.push('/onboarding/reveal/sun');
+    }, 12000);
+
+    return () => {
+      clearTimeout(timer);
+      clearInterval(messageInterval);
+    };
+  }, [router, userProfile.name]);
+
+  const displayMessage = messageIndex < PROCESSING_MESSAGES.length
+    ? PROCESSING_MESSAGES[messageIndex]
+    : `Almost there, ${userProfile.name}...`;
 
   return (
     <View style={styles.container}>
       <View style={styles.iconContainer}>
-        <Star size={48} color={tokens.colors.gold} />
+        <Star size={56} color={tokens.colors.gold} />
       </View>
       
       <ActivityIndicator
@@ -28,10 +60,7 @@ export default function ProcessingScreen() {
         style={styles.spinner}
       />
       
-      <Text style={styles.title}>Calculating your chart</Text>
-      <Text style={styles.subtitle}>
-        Aligning the stars with your birth data
-      </Text>
+      <Text style={styles.message}>{displayMessage}</Text>
     </View>
   );
 }
@@ -45,22 +74,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   iconContainer: {
-    marginBottom: tokens.spacing.xl,
+    marginBottom: tokens.spacing['2xl'],
   },
   spinner: {
-    marginBottom: tokens.spacing.xl,
+    marginBottom: tokens.spacing['2xl'],
   },
-  title: {
+  message: {
     fontFamily: 'Cormorant',
-    fontSize: tokens.typography.sizes.headingLg,
+    fontSize: tokens.typography.sizes.heading,
     fontWeight: String(tokens.typography.fontWeights.light) as any,
     color: tokens.colors.textPrimary,
-    marginBottom: tokens.spacing.md,
-  },
-  subtitle: {
-    fontFamily: 'Montserrat',
-    fontSize: tokens.typography.sizes.body,
-    color: tokens.colors.textSecondary,
     textAlign: 'center',
+    lineHeight: tokens.typography.lineHeights.relaxed * tokens.typography.sizes.heading,
   },
 });

@@ -3,28 +3,101 @@ import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { tokens } from '../../lib/tokens';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
+import { useAppStore } from '../../store/useAppStore';
+import { useRouter } from 'expo-router';
+import { Star, Lock } from 'lucide-react-native';
+
+/**
+ * Home Dashboard - Main App Tab 1
+ * 
+ * The habit loop begins. Daily reading.
+ * Copy from design/ux-writing.md
+ */
 
 export default function HomeScreen() {
+  const router = useRouter();
+  const userProfile = useAppStore((state) => state.userProfile);
+  
+  // Get current date
+  const today = new Date();
+  const dateStr = today.toLocaleDateString('en-US', { 
+    weekday: 'short', 
+    month: 'short', 
+    day: 'numeric' 
+  });
+  
+  // Determine greeting based on time
+  const hour = today.getHours();
+  const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Text style={styles.title}>Welcome to Stellr</Text>
-      <Text style={styles.subtitle}>Your cosmic companion</Text>
+      <Text style={styles.greeting}>{greeting}, {userProfile.name || 'friend'}</Text>
+      <Text style={styles.date}>{dateStr}</Text>
       
-      <View style={styles.cards}>
-        <Card title="Daily Reading">
-          <Text style={styles.cardText}>Your daily horoscope awaits</Text>
-          <Button variant="primary" onPress={() => {}} style={styles.button}>
-            Read Today
-          </Button>
-        </Card>
-        
-        <Card title="Birth Chart" locked>
-          <Text style={styles.cardText}>Unlock your full natal chart</Text>
-          <Button variant="ghost" onPress={() => {}} style={styles.button}>
-            Unlock with Stellr+
-          </Button>
-        </Card>
+      <Card style={styles.dailyCard}>
+        <View style={styles.dailyHeader}>
+          <Star size={20} color={tokens.colors.gold} strokeWidth={1.5} />
+          <Text style={styles.dailyTitle}>Your reading for {dateStr}</Text>
+        </View>
+        <Text style={styles.dailyBody}>
+          Today's energy favours depth over surface. You might feel pulled between staying in your comfort zone and exploring something unfamiliar. Trust your instincts — they're sharper than usual right now.
+        </Text>
+        <Button
+          variant="ghost"
+          onPress={() => router.push('/today')}
+          style={styles.readMoreButton}
+        >
+          Read full forecast →
+        </Button>
+      </Card>
+      
+      <View style={styles.quickActions}>
+        <Button
+          variant="secondary"
+          onPress={() => router.push('/chart')}
+          style={styles.quickAction}
+        >
+          Full Chart
+        </Button>
+        <Button
+          variant="secondary"
+          onPress={() => {}}
+          style={styles.quickAction}
+        >
+          Compatibility
+        </Button>
+        <Button
+          variant="secondary"
+          onPress={() => router.push('/onboarding/question')}
+          style={styles.quickAction}
+        >
+          Retake
+        </Button>
       </View>
+      
+      <Text style={styles.sectionTitle}>For you this week</Text>
+      
+      <Card>
+        <Text style={styles.insightTitle}>Career momentum building</Text>
+        <Text style={styles.insightBody}>
+          A project you've been nurturing is ready to go public. The stars support bold moves in your professional sphere.
+        </Text>
+      </Card>
+      
+      <Card>
+        <Text style={styles.insightTitle}>Relationship clarity</Text>
+        <Text style={styles.insightBody}>
+          Someone in your life is about to show you where they really stand. Pay attention to actions, not words.
+        </Text>
+      </Card>
+      
+      <Card locked>
+        <Text style={styles.insightTitle}>Your compatibility with [Partner]</Text>
+        <Text style={styles.insightBody}>
+          See where your energies align, where friction tends to appear — and what your combination uniquely creates together.
+        </Text>
+      </Card>
     </ScrollView>
   );
 }
@@ -38,29 +111,69 @@ const styles = StyleSheet.create({
     padding: tokens.spacing.lg,
     paddingTop: tokens.layout.safeTop,
   },
-  title: {
+  greeting: {
     fontFamily: 'Cormorant',
     fontSize: tokens.typography.sizes.display,
     fontWeight: String(tokens.typography.fontWeights.light) as any,
     color: tokens.colors.textPrimary,
     marginBottom: tokens.spacing.xs,
   },
-  subtitle: {
+  date: {
     fontFamily: 'Montserrat',
-    fontSize: tokens.typography.sizes.body,
+    fontSize: tokens.typography.sizes.sm,
     color: tokens.colors.textSecondary,
     marginBottom: tokens.spacing.xl,
   },
-  cards: {
-    gap: tokens.spacing.lg,
+  dailyCard: {
+    marginBottom: tokens.spacing.lg,
   },
-  cardText: {
+  dailyHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: tokens.spacing.sm,
+    marginBottom: tokens.spacing.md,
+  },
+  dailyTitle: {
+    fontFamily: 'Montserrat-Medium',
+    fontSize: tokens.typography.sizes.subheading,
+    color: tokens.colors.textPrimary,
+  },
+  dailyBody: {
     fontFamily: 'Montserrat',
     fontSize: tokens.typography.sizes.body,
     color: tokens.colors.textSecondary,
+    lineHeight: tokens.typography.lineHeights.relaxed * tokens.typography.sizes.body,
     marginBottom: tokens.spacing.md,
   },
-  button: {
-    marginTop: tokens.spacing.sm,
+  readMoreButton: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: tokens.spacing.sm,
+  },
+  quickActions: {
+    flexDirection: 'row',
+    gap: tokens.spacing.sm,
+    marginBottom: tokens.spacing.xl,
+  },
+  quickAction: {
+    flex: 1,
+  },
+  sectionTitle: {
+    fontFamily: 'Montserrat-Medium',
+    fontSize: tokens.typography.sizes.subheading,
+    color: tokens.colors.textSecondary,
+    marginBottom: tokens.spacing.md,
+  },
+  insightTitle: {
+    fontFamily: 'Cormorant',
+    fontSize: tokens.typography.sizes.subheading,
+    fontWeight: String(tokens.typography.fontWeights.light) as any,
+    color: tokens.colors.textPrimary,
+    marginBottom: tokens.spacing.sm,
+  },
+  insightBody: {
+    fontFamily: 'Montserrat',
+    fontSize: tokens.typography.sizes.body,
+    color: tokens.colors.textSecondary,
+    lineHeight: tokens.typography.lineHeights.relaxed * tokens.typography.sizes.body,
   },
 });
