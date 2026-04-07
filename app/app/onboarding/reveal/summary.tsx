@@ -32,10 +32,19 @@ export default function SummaryScreen() {
   const router = useRouter();
   const completeOnboarding = useAppStore((state) => state.completeOnboarding);
   const userProfile = useAppStore((state) => state.userProfile);
+  const saveUserAndSigns = useAppStore((state) => state.saveUserAndSigns);
 
-  const handleFinish = () => {
-    completeOnboarding();
-    router.replace('/(tabs)');
+  const handleFinish = async () => {
+    try {
+      await saveUserAndSigns();
+      completeOnboarding();
+      router.replace('/(tabs)');
+    } catch (error) {
+      console.error('Failed to save user:', error);
+      // Still complete onboarding even if save fails (offline mode)
+      completeOnboarding();
+      router.replace('/(tabs)');
+    }
   };
 
   const handleShare = async () => {

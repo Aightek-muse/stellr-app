@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { tokens } from '../../lib/tokens';
 import { Card } from '../../components/ui/Card';
@@ -17,6 +17,16 @@ import { Star, Lock } from 'lucide-react-native';
 export default function HomeScreen() {
   const router = useRouter();
   const userProfile = useAppStore((state) => state.userProfile);
+  const signs = useAppStore((state) => state.signs);
+  const dailyReading = useAppStore((state) => state.dailyReading);
+  const loadDailyReading = useAppStore((state) => state.loadDailyReading);
+  
+  // Load daily reading when signs are available
+  useEffect(() => {
+    if (signs?.sun?.sign) {
+      loadDailyReading(signs.sun.sign);
+    }
+  }, [signs?.sun?.sign]);
   
   // Get current date
   const today = new Date();
@@ -40,9 +50,16 @@ export default function HomeScreen() {
           <Star size={20} color={tokens.colors.gold} strokeWidth={1.5} />
           <Text style={styles.dailyTitle}>Your reading for {dateStr}</Text>
         </View>
-        <Text style={styles.dailyBody}>
-          Today's energy favours depth over surface. You might feel pulled between staying in your comfort zone and exploring something unfamiliar. Trust your instincts — they're sharper than usual right now.
-        </Text>
+        {dailyReading ? (
+          <>
+            <Text style={styles.dailyTitle}>{dailyReading.title}</Text>
+            <Text style={styles.dailyBody}>{dailyReading.content}</Text>
+          </>
+        ) : (
+          <Text style={styles.dailyBody}>
+            Today's energy favours depth over surface. You might feel pulled between staying in your comfort zone and exploring something unfamiliar. Trust your instincts — they're sharper than usual right now.
+          </Text>
+        )}
         <Button
           variant="ghost"
           onPress={() => router.push('/today')}

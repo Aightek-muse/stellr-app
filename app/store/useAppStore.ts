@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import type { SignResult } from '../../lib/signAlgorithm';
+import { getOrCreateUser, saveUserProfile, getDailyReading } from '../../lib/database';
 
 interface UserProfile {
   name: string;
@@ -23,6 +24,10 @@ interface AppState {
   // Calculated signs
   signs: SignResult | null;
   
+  // Backend state
+  userId: string | null;
+  dailyReading: any | null;
+  
   // Actions
   completeOnboarding: () => void;
   setCurrentOnboardingStep: (step: number) => void;
@@ -32,6 +37,10 @@ interface AppState {
   // Quiz actions
   addAnswer: (questionId: number, optionId: string) => void;
   calculateSigns: () => void;
+  
+  // Backend actions
+  saveUserAndSigns: () => Promise<void>;
+  loadDailyReading: (sign: string) => Promise<void>;
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
@@ -43,6 +52,8 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
   answers: {},
   signs: null,
+  userId: null,
+  dailyReading: null,
   
   // Actions
   completeOnboarding: () => set({ hasCompletedOnboarding: true }),
@@ -63,6 +74,8 @@ export const useAppStore = create<AppState>((set, get) => ({
       },
       answers: {},
       signs: null,
+      userId: null,
+      dailyReading: null,
     }),
   
   // Quiz actions
@@ -76,5 +89,31 @@ export const useAppStore = create<AppState>((set, get) => ({
     const profile = { name: get().userProfile.name, answers: get().answers };
     const signs = calcSigns(profile);
     set({ signs });
+  },
+  
+  // Backend actions
+  saveUserAndSigns: async () => {
+    const state = get();
+    if (!state.signs) throw new Error('Signs not calculated yet');
+    
+    const user = await getOrCreateUser(state.userProfile.name);
+    await saveUserProfile(
+      user.id,
+      state.userProfile.name,
+      state.signs,
+      state.answers
+    );
+    set({ userId: user.id });
+  },
+  
+  loadDailyReading: async (sign: string) => {
+    const today = new Date().toISOString().split('T')[0];
+    try {
+      const reading = await getDailyReading(sign, today);
+      set({ dailyReading: reading });
+    } catch (error) {
+      console.error('Failed to load daily reading:', error);
+      set({ dailyReading: null });
+    }
   },
 }));
