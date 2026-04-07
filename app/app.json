@@ -1,0 +1,35 @@
+{
+  "expo": {
+    "name": "Stellr",
+    "slug": "stellr-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "stellr",
+    "platforms": ["ios", "android"],
+    "icon": "./assets/images/icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./assets/images/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#08090F"
+    },
+    "ios": {
+      "bundleIdentifier": "com.aightek.stellr",
+      "supportsTablet": false
+    },
+    "android": {
+      "package": "com.aightek.stellr",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#08090F"
+      },
+      "edgeToEdgeEnabled": true
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
