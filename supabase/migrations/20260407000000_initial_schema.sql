@@ -1,5 +1,5 @@
 -- Stellr Initial Schema
--- Run this in Supabase SQL Editor to create all tables
+-- Run this in Supabase SQL Editor or via `supabase db push`
 
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -69,34 +69,52 @@ CREATE INDEX IF NOT EXISTS idx_daily_readings_sign_date ON daily_readings(sign, 
 CREATE INDEX IF NOT EXISTS idx_insights_premium ON insights(premium, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_insights_sign_filter ON insights USING GIN(sign_filter);
 
--- Row Level Security (RLS) policies
--- For now, we'll keep tables open for reading with anon key
--- In production, you'd want stricter policies
+-- ============================================
+-- ROW LEVEL SECURITY (RLS) - SECURITY CRITICAL
+-- ============================================
 
+-- Enable RLS on all tables
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE daily_readings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE subscriptions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE insights ENABLE ROW LEVEL SECURITY;
 
--- Allow public read access to daily_readings and insights
-CREATE POLICY "Public can read daily readings" ON daily_readings
-  FOR SELECT USING (true);
+-- ============================================
+-- users table policies
+-- ============================================
+CREATE POLICY "Users can read own data" ON users
+  FOR SELECT USING (auth.uid() = id);
 
-CREATE POLICY "Public can read insights" ON insights
-  FOR SELECT USING (true);
+CREATE POLICY "Users can insert own data" ON users
+  FOR INSERT WITH CHECK (auth.uid() = id);
 
--- Allow users to read their own profile
+-- ============================================
+-- user_profiles table policies
+-- ============================================
 CREATE POLICY "Users can read own profile" ON user_profiles
-  FOR SELECT USING (
-    EXISTS (
-      SELECT 1 FROM users WHERE users.id = user_profiles.user_id
-    )
-  );
+  FOR SELECT USING (auth.uid() = user_id);
 
--- Allow insert/update on user_profiles (for onboarding)
-CREATE POLICY "Users can insert profiles" ON user_profiles
-  FOR INSERT WITH CHECK (true);
+CREATE POLICY "Users can insert own profile" ON user_profiles
+  FOR INSERT WITH CHECK (auth.uid() = user_id);
 
 CREATE POLICY "Users can update own profile" ON user_profiles
-  FOR UPDATE USING (true);
+  FOR UPDATE USING (auth.uid() = user_id);
+
+-- ============================================
+-- daily_readings table policies (public read)
+-- ============================================
+CREATE POLICY "Anyone can read daily readings" ON daily_readings
+  FOR SELECT USING (true);
+
+-- ============================================
+-- subscriptions table policies
+-- ============================================
+CREATE POLICY "Users can read own subscription" ON subscriptions
+  FOR SELECT USING (auth.uid() = user_id);
+
+-- ============================================
+-- insights table policies (public read)
+-- ============================================
+CREATE POLICY "Anyone can read insights" ON insights
+  FOR SELECT USING (true);
