@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { tokens } from '../lib/tokens';
+import { tokens } from '../../lib/tokens';
 import { Card } from '../../components/ui/Card';
 import { LockedCard } from '../../components/LockedCard';
 import { ComingSoonModal } from '../../components/ComingSoonModal';

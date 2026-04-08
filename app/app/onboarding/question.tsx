@@ -1,12 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { tokens } from '../lib/tokens';
+import { tokens } from '../../lib/tokens';
 import { AnswerOption } from '../../components/ui/AnswerOption';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { useRouter } from 'expo-router';
 import { useAppStore } from '../../store/useAppStore';
-import { getQuestions } from '../lib/signAlgorithm';
-import type { Question } from '../lib/signAlgorithm';
+import { getQuestions } from '../../lib/signAlgorithm';
+import type { Question } from '../../lib/signAlgorithm';
 
 /**
  * Question Flow Screen - Onboarding Steps 3-9 (Q1-Q7)
