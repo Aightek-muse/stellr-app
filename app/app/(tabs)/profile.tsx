@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Switch } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, Switch, Linking } from 'react-native';
 import { tokens } from '../../lib/tokens';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
+import { Paywall } from '../../components/Paywall';
 import { useAppStore } from '../../store/useAppStore';
 import { User, Bell, Shield, Info, LogOut, Star } from 'lucide-react-native';
 
@@ -16,7 +17,37 @@ import { User, Bell, Shield, Info, LogOut, Star } from 'lucide-react-native';
 
 export default function ProfileScreen() {
   const userProfile = useAppStore((state) => state.userProfile);
+  const subscription = useAppStore((state) => state.subscription);
+  const checkSubscription = useAppStore((state) => state.checkSubscription);
+  const purchaseSubscription = useAppStore((state) => state.purchaseSubscription);
+  const restorePurchases = useAppStore((state) => state.restorePurchases);
+  
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [paywallVisible, setPaywallVisible] = useState(false);
+  
+  // Check subscription status on mount
+  useEffect(() => {
+    checkSubscription();
+  }, []);
+  
+  const isSubscriber = subscription?.isSubscriber ?? false;
+  
+  const handleManageSubscription = async () => {
+    // Open App Store / Play Store for subscription management
+    try {
+      await Linking.openURL('https://apps.apple.com/account/subscriptions');
+    } catch (error) {
+      console.error('Failed to open subscription management:', error);
+    }
+  };
+  
+  const handleUpgradePress = () => {
+    if (isSubscriber) {
+      handleManageSubscription();
+    } else {
+      setPaywallVisible(true);
+    }
+  };
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -30,7 +61,10 @@ export default function ProfileScreen() {
           <View style={styles.profileInfo}>
             <Text style={styles.profileName}>{userProfile.name || 'User'}</Text>
             <View style={styles.subscriptionBadge}>
-              <Badge variant="stellr-plus" label="Free" />
+              <Badge 
+                variant="stellr-plus" 
+                label={isSubscriber ? 'Stellr+' : 'Free'} 
+              />
             </View>
           </View>
         </View>
@@ -61,12 +95,19 @@ export default function ProfileScreen() {
         </Text>
         <Button
           variant="primary"
-          onPress={() => {}}
+          onPress={handleUpgradePress}
           style={styles.upgradeCta}
         >
-          Unlock Stellr+
+          {isSubscriber ? 'Manage Subscription' : 'Unlock Stellr+'}
         </Button>
-        <Text style={styles.pricing}>₺19.99/month, billed annually</Text>
+        <Text style={styles.pricing}>
+          {isSubscriber 
+            ? subscription?.expirationDate 
+              ? `Expires: ${new Date(subscription.expirationDate).toLocaleDateString()}`
+              : 'Active'
+            : '₺29.99/month or ₺199.99/year (Save 44%)'
+          }
+        </Text>
       </Card>
       
       <Text style={styles.sectionTitle}>Settings</Text>
@@ -114,6 +155,19 @@ export default function ProfileScreen() {
       </Button>
       
       <Text style={styles.version}>Version 1.0.0</Text>
+      
+      <Paywall
+        visible={paywallVisible}
+        onClose={() => setPaywallVisible(false)}
+        onPurchase={async () => {
+          await purchaseSubscription();
+          setPaywallVisible(false);
+        }}
+        onRestore={async () => {
+          await restorePurchases();
+          setPaywallVisible(false);
+        }}
+      />
     </ScrollView>
   );
 }

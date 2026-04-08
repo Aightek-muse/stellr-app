@@ -1,7 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { tokens } from '../../lib/tokens';
 import { Card } from '../../components/ui/Card';
+import { LockedCard } from '../../components/LockedCard';
+import { Paywall } from '../../components/Paywall';
 import { Button } from '../../components/ui/Button';
 import { useAppStore } from '../../store/useAppStore';
 import { useRouter } from 'expo-router';
@@ -20,6 +22,16 @@ export default function HomeScreen() {
   const signs = useAppStore((state) => state.signs);
   const dailyReading = useAppStore((state) => state.dailyReading);
   const loadDailyReading = useAppStore((state) => state.loadDailyReading);
+  const subscription = useAppStore((state) => state.subscription);
+  const checkSubscription = useAppStore((state) => state.checkSubscription);
+  const purchaseSubscription = useAppStore((state) => state.purchaseSubscription);
+  
+  const [paywallVisible, setPaywallVisible] = useState(false);
+  
+  // Check subscription status on mount
+  useEffect(() => {
+    checkSubscription();
+  }, []);
   
   // Load daily reading when signs are available
   useEffect(() => {
@@ -27,6 +39,14 @@ export default function HomeScreen() {
       loadDailyReading(signs.sun.sign);
     }
   }, [signs?.sun?.sign]);
+  
+  const isSubscriber = subscription?.isSubscriber ?? false;
+  
+  const handleLockedFeaturePress = () => {
+    if (!isSubscriber) {
+      setPaywallVisible(true);
+    }
+  };
   
   // Get current date
   const today = new Date();
@@ -109,12 +129,28 @@ export default function HomeScreen() {
         </Text>
       </Card>
       
-      <Card locked>
+      <LockedCard
+        onPress={handleLockedFeaturePress}
+        title="Compatibility"
+      >
         <Text style={styles.insightTitle}>Your compatibility with [Partner]</Text>
         <Text style={styles.insightBody}>
           See where your energies align, where friction tends to appear — and what your combination uniquely creates together.
         </Text>
-      </Card>
+      </LockedCard>
+      
+      <Paywall
+        visible={paywallVisible}
+        onClose={() => setPaywallVisible(false)}
+        onPurchase={async () => {
+          await purchaseSubscription();
+          setPaywallVisible(false);
+        }}
+        onRestore={async () => {
+          await useAppStore.getState().restorePurchases();
+          setPaywallVisible(false);
+        }}
+      />
     </ScrollView>
   );
 }

@@ -28,6 +28,13 @@ interface AppState {
   userId: string | null;
   dailyReading: any | null;
   
+  // Subscription state
+  subscription: {
+    isSubscriber: boolean;
+    expirationDate?: string;
+    originalPurchaseDate?: string;
+  } | null;
+  
   // Actions
   completeOnboarding: () => void;
   setCurrentOnboardingStep: (step: number) => void;
@@ -41,6 +48,11 @@ interface AppState {
   // Backend actions
   saveUserAndSigns: () => Promise<void>;
   loadDailyReading: (sign: string) => Promise<void>;
+  
+  // Subscription actions
+  checkSubscription: () => Promise<void>;
+  purchaseSubscription: () => Promise<void>;
+  restorePurchases: () => Promise<void>;
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
@@ -54,6 +66,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   signs: null,
   userId: null,
   dailyReading: null,
+  subscription: null,
   
   // Actions
   completeOnboarding: () => set({ hasCompletedOnboarding: true }),
@@ -115,5 +128,30 @@ export const useAppStore = create<AppState>((set, get) => ({
       console.error('Failed to load daily reading:', error);
       set({ dailyReading: null });
     }
+  },
+  
+  // Subscription actions
+  checkSubscription: async () => {
+    const { getSubscriptionStatus } = require('../lib/revenuecat');
+    const status = await getSubscriptionStatus();
+    set({ subscription: status });
+  },
+  
+  purchaseSubscription: async () => {
+    const { purchaseSubscription: purchase } = require('../lib/revenuecat');
+    try {
+      await purchase();
+      // Refresh status after purchase
+      await get().checkSubscription();
+    } catch (err) {
+      // Handle cancellation/error
+      console.error('Purchase failed:', err);
+    }
+  },
+  
+  restorePurchases: async () => {
+    const { restorePurchases: restore } = require('../lib/revenuecat');
+    await restore();
+    await get().checkSubscription();
   },
 }));
