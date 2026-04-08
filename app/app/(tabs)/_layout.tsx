@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router/tabs';
 import { Home, Calendar, Lock, User } from 'lucide-react-native';
-import { tokens } from '../../lib/tokens';
+import { tokens } from '../lib/tokens';
 
 export default function TabsLayout() {
   return (

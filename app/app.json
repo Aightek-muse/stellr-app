@@ -5,7 +5,10 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "scheme": "stellr",
-    "platforms": ["ios", "android"],
+    "platforms": [
+      "ios",
+      "android"
+    ],
     "icon": "./assets/images/icon.png",
     "userInterfaceStyle": "dark",
     "splash": {
@@ -15,7 +18,10 @@
     },
     "ios": {
       "bundleIdentifier": "com.aightek.stellr",
-      "supportsTablet": false
+      "supportsTablet": false,
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "package": "com.aightek.stellr",
@@ -30,6 +36,13 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "3eb60f0a-74f0-4fe8-97db-487c8f749150"
+      }
+    },
+    "owner": "aightek"
   }
 }
