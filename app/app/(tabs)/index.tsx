@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { tokens } from '../../lib/tokens';
 import { Card } from '../../components/ui/Card';
 import { LockedCard } from '../../components/LockedCard';
-import { Paywall } from '../../components/Paywall';
+import { ComingSoonModal } from '../../components/ComingSoonModal';
 import { Button } from '../../components/ui/Button';
 import { useAppStore } from '../../store/useAppStore';
 import { useRouter } from 'expo-router';
@@ -22,16 +22,8 @@ export default function HomeScreen() {
   const signs = useAppStore((state) => state.signs);
   const dailyReading = useAppStore((state) => state.dailyReading);
   const loadDailyReading = useAppStore((state) => state.loadDailyReading);
-  const subscription = useAppStore((state) => state.subscription);
-  const checkSubscription = useAppStore((state) => state.checkSubscription);
-  const purchaseSubscription = useAppStore((state) => state.purchaseSubscription);
   
-  const [paywallVisible, setPaywallVisible] = useState(false);
-  
-  // Check subscription status on mount
-  useEffect(() => {
-    checkSubscription();
-  }, []);
+  const [modalVisible, setModalVisible] = useState(false);
   
   // Load daily reading when signs are available
   useEffect(() => {
@@ -40,12 +32,8 @@ export default function HomeScreen() {
     }
   }, [signs?.sun?.sign]);
   
-  const isSubscriber = subscription?.isSubscriber ?? false;
-  
   const handleLockedFeaturePress = () => {
-    if (!isSubscriber) {
-      setPaywallVisible(true);
-    }
+    setModalVisible(true);
   };
   
   // Get current date
@@ -139,17 +127,9 @@ export default function HomeScreen() {
         </Text>
       </LockedCard>
       
-      <Paywall
-        visible={paywallVisible}
-        onClose={() => setPaywallVisible(false)}
-        onPurchase={async () => {
-          await purchaseSubscription();
-          setPaywallVisible(false);
-        }}
-        onRestore={async () => {
-          await useAppStore.getState().restorePurchases();
-          setPaywallVisible(false);
-        }}
+      <ComingSoonModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
       />
     </ScrollView>
   );

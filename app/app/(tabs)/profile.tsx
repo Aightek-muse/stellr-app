@@ -1,52 +1,28 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Switch, Linking } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, Switch } from 'react-native';
 import { tokens } from '../../lib/tokens';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
-import { Paywall } from '../../components/Paywall';
+import { ComingSoonModal } from '../../components/ComingSoonModal';
 import { useAppStore } from '../../store/useAppStore';
 import { User, Bell, Shield, Info, LogOut, Star } from 'lucide-react-native';
 
 /**
  * Profile/Settings Screen - Main App Tab 4
  * 
- * User info, subscription status, settings, and logout.
+ * User info, settings, and "Coming Soon" for premium features.
  * Copy from design/ux-writing.md
  */
 
 export default function ProfileScreen() {
   const userProfile = useAppStore((state) => state.userProfile);
-  const subscription = useAppStore((state) => state.subscription);
-  const checkSubscription = useAppStore((state) => state.checkSubscription);
-  const purchaseSubscription = useAppStore((state) => state.purchaseSubscription);
-  const restorePurchases = useAppStore((state) => state.restorePurchases);
   
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [paywallVisible, setPaywallVisible] = useState(false);
-  
-  // Check subscription status on mount
-  useEffect(() => {
-    checkSubscription();
-  }, []);
-  
-  const isSubscriber = subscription?.isSubscriber ?? false;
-  
-  const handleManageSubscription = async () => {
-    // Open App Store / Play Store for subscription management
-    try {
-      await Linking.openURL('https://apps.apple.com/account/subscriptions');
-    } catch (error) {
-      console.error('Failed to open subscription management:', error);
-    }
-  };
+  const [modalVisible, setModalVisible] = useState(false);
   
   const handleUpgradePress = () => {
-    if (isSubscriber) {
-      handleManageSubscription();
-    } else {
-      setPaywallVisible(true);
-    }
+    setModalVisible(true);
   };
 
   return (
@@ -98,15 +74,10 @@ export default function ProfileScreen() {
           onPress={handleUpgradePress}
           style={styles.upgradeCta}
         >
-          {isSubscriber ? 'Manage Subscription' : 'Unlock Stellr+'}
+          Unlock Stellr+
         </Button>
         <Text style={styles.pricing}>
-          {isSubscriber 
-            ? subscription?.expirationDate 
-              ? `Expires: ${new Date(subscription.expirationDate).toLocaleDateString()}`
-              : 'Active'
-            : '₺29.99/month or ₺199.99/year (Save 44%)'
-          }
+          Coming soon
         </Text>
       </Card>
       
@@ -156,17 +127,9 @@ export default function ProfileScreen() {
       
       <Text style={styles.version}>Version 1.0.0</Text>
       
-      <Paywall
-        visible={paywallVisible}
-        onClose={() => setPaywallVisible(false)}
-        onPurchase={async () => {
-          await purchaseSubscription();
-          setPaywallVisible(false);
-        }}
-        onRestore={async () => {
-          await restorePurchases();
-          setPaywallVisible(false);
-        }}
+      <ComingSoonModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
       />
     </ScrollView>
   );

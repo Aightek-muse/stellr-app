@@ -1,38 +1,26 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { tokens } from '../../lib/tokens';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
-import { Paywall } from '../../components/Paywall';
-import { useAppStore } from '../../store/useAppStore';
+import { ComingSoonModal } from '../../components/ComingSoonModal';
 import { useRouter } from 'expo-router';
 import { Lock, Star, Heart, Zap, Briefcase, Compass } from 'lucide-react-native';
 
 /**
  * Full Chart Screen - Main App Tab 3 (Locked - Stellr+)
  * 
- * Feature preview with upgrade CTA.
+ * Feature preview with "Coming Soon" modal for TestFlight.
  * Copy from design/ux-writing.md
  */
 
 export default function ChartScreen() {
   const router = useRouter();
-  const subscription = useAppStore((state) => state.subscription);
-  const checkSubscription = useAppStore((state) => state.checkSubscription);
-  const purchaseSubscription = useAppStore((state) => state.purchaseSubscription);
   
-  const [paywallVisible, setPaywallVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
   
-  // Check subscription status on mount
-  useEffect(() => {
-    checkSubscription();
-  }, []);
-  
-  const isSubscriber = subscription?.isSubscriber ?? false;
-  
-  if (!isSubscriber) {
-    return (
+  return (
     <View style={styles.container}>
       <Card style={styles.lockCard}>
         <View style={styles.badgeContainer}>
@@ -102,7 +90,7 @@ export default function ChartScreen() {
         
         <Button
           variant="primary"
-          onPress={() => setPaywallVisible(true)}
+          onPress={() => setModalVisible(true)}
           style={styles.cta}
         >
           Unlock My Full Chart
@@ -117,25 +105,10 @@ export default function ChartScreen() {
         </Button>
       </Card>
       
-      <Paywall
-        visible={paywallVisible}
-        onClose={() => setPaywallVisible(false)}
-        onPurchase={async () => {
-          await purchaseSubscription();
-          setPaywallVisible(false);
-        }}
-        onRestore={async () => {
-          await useAppStore.getState().restorePurchases();
-          setPaywallVisible(false);
-        }}
+      <ComingSoonModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
       />
-    </View>
-  );
-  
-  // Subscriber view - show full chart
-  return (
-    <View style={styles.container}>
-      <Text style={styles.subscriberText}>Full Chart (Subscriber Content)</Text>
     </View>
   );
 }
