@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Link } from 'expo-router';
-import { tokens } from '../../lib/tokens';
+import { tokens } from '../lib/tokens';
 import { Button } from '../components/ui/Button';
 
 export default function NotFoundScreen() {
