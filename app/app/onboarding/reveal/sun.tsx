@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { tokens } from '../../lib/tokens';
-import { Button } from '../../components/ui/Button';
+import { tokens } from '../../../lib/tokens';
+import { Button } from '../../../../components/ui/Button';
 import { useRouter } from 'expo-router';
-import { useAppStore } from '../../../store/useAppStore';
+import { useAppStore } from '../../../../store/useAppStore';
 import { Sun } from '../../../components/icons/Sun';
 
 /**
