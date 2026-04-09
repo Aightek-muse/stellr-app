@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { tokens } from '../../lib/tokens';
 import { useRouter } from 'expo-router';
 import { useAppStore } from '../../store/useAppStore';
-import { Star } from '../../../components/icons/Star';
+import { Star } from '../../components/icons/Star';
 
 /**
  * Processing Screen - Onboarding Step 10

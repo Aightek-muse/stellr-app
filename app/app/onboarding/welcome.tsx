@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { tokens } from '../../lib/tokens';
-import { Button } from '../../../components/ui/Button';
+import { Button } from '../../components/ui/Button';
 import { useRouter } from 'expo-router';
-import { Star } from '../../../components/icons/Star';
+import { Star } from '../../components/icons/Star';
 
 /**
  * Welcome Screen - Onboarding Step 1
